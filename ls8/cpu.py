@@ -23,7 +23,7 @@ class CPU:
         self.ram = [0] * 256
         self.reg[7] = 0b11110100 
         self.program_filename = file
-        self.fl = 0
+        self.fl = 0b00000001
 
 
 
@@ -139,12 +139,13 @@ class CPU:
                 pc = self.reg[register]
             
             elif inst == self.JEQ:
+                print(pc)
                 if self.fl == 0b00000001:
                     register = self.ram[pc + 1]
                     pc = self.reg[register]
-            
+
             elif inst == self.JNE:
-                if self.fl % 2 == 0:
+                if self.fl  != 0b00000001:
                     register = self.ram[pc + 1]
                     pc = self.reg[register]
 
