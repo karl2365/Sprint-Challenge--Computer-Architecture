@@ -130,7 +130,6 @@ class CPU:
                 pc += 2
 
             elif inst == self.CALL:
-                print('fuck')
                 return_add = pc + 2
                 print(return_add)
                 self.reg[sc] -=1
@@ -141,7 +140,6 @@ class CPU:
                 pc = dest_add
 
             elif inst == self.RET:
-                print('you')
                 return_add = self.ram[self.reg[sc]]
                 self.reg[sc] += 1
                 pc = return_add
