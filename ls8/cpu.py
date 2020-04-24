@@ -90,7 +90,6 @@ class CPU:
         """Run the CPU."""
         pc = 0 
         sc = 7
-        
         running = True
         # print(self.ram)
         while running:
@@ -139,15 +138,19 @@ class CPU:
                 pc = self.reg[register]
             
             elif inst == self.JEQ:
-                print(pc)
+                
                 if self.fl == 0b00000001:
                     register = self.ram[pc + 1]
                     pc = self.reg[register]
+                else:
+                    pc += 2
 
             elif inst == self.JNE:
                 if self.fl  != 0b00000001:
                     register = self.ram[pc + 1]
                     pc = self.reg[register]
+                else: 
+                    pc += 2
 
             elif inst == self.HLT:
                 running = False
