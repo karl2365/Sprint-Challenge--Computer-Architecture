@@ -20,6 +20,7 @@ class CPU:
         self.JNE = 0b01010110
         self.CALL = 0b01010000
         self.RET = 0b00010001
+        self.ADD = 0b10100000
         self.pc = 0
         self.reg = [0] * 8
         self.ram = [0] * 256
@@ -131,18 +132,22 @@ class CPU:
 
             elif inst == self.CALL:
                 return_add = pc + 2
-                print(return_add)
                 self.reg[sc] -=1
                 self.ram[self.reg[sc]] = return_add
                 reg_num = self.ram[pc + 1]
                 dest_add = self.reg[reg_num]
-                print(dest_add)
                 pc = dest_add
 
             elif inst == self.RET:
                 return_add = self.ram[self.reg[sc]]
                 self.reg[sc] += 1
                 pc = return_add
+
+            elif inst == self.ADD:
+                reg_a = self.ram[pc + 1]
+                reg_b = self.ram[pc + 2]
+                self.alu('ADD', reg_a, reg_b)
+                pc += 3
 
             elif inst == self.CMP:
                 reg_a = self.ram[pc+1]
@@ -173,7 +178,7 @@ class CPU:
                 running = False
 
             else:
-                print(inst)
+                print('inst', inst)
                 print('instruction not found')
                 running = False
 
