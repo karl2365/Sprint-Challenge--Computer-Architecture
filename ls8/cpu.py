@@ -14,11 +14,16 @@ class CPU:
         self.MUL = 0b10100010
         self.PUSH = 0b01000101
         self.POP = 0b01000110
+        self.CMP = 0b10100111
+        self.JMP = 0b01010100
+        self.JEQ = 0b01010101
+        self.JNE = 0b01010110
         self.pc = 0
         self.reg = [0] * 8
         self.ram = [0] * 256
         self.reg[7] = 0b11110100 
         self.program_filename = file
+        self.fl = 0
 
 
 
@@ -46,9 +51,18 @@ class CPU:
 
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
-        #elif op == "SUB": etc
+
         elif op == "MUL":
             self.reg[reg_a] *= self.reg[reg_b]
+
+        elif op == "CMP":
+            if self.reg[reg_a] == self.reg[reg_b]:
+                self.fl = 0b00000001
+            elif self.reg[reg_a] < self.reg[reg_b]:
+                self.fl = 0b00000100
+            elif self.reg[reg_a] > self.reg[reg_b]:
+                self.fl = 0b00000010
+
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -76,6 +90,7 @@ class CPU:
         """Run the CPU."""
         pc = 0 
         sc = 7
+        
         running = True
         # print(self.ram)
         while running:
@@ -112,6 +127,26 @@ class CPU:
                 self.reg[reg_num] = value
                 self.reg[sc] += 1
                 pc += 2
+
+            elif inst == self.CMP:
+                reg_a = self.ram[pc+1]
+                reg_b = self.ram[pc+2]
+                self.alu('CMP', reg_a, reg_b)
+                pc += 3
+
+            elif inst == self.JMP:
+                register = self.ram[pc + 1]
+                pc = self.reg[register]
+            
+            elif inst == self.JEQ:
+                if self.fl == 0b00000001:
+                    register = self.ram[pc + 1]
+                    pc = self.reg[register]
+            
+            elif inst == self.JNE:
+                if self.fl % 2 == 0:
+                    register = self.ram[pc + 1]
+                    pc = self.reg[register]
 
             elif inst == self.HLT:
                 running = False
